@@ -24,43 +24,36 @@ function sleep(seconds) {
 }
 
 async function getUser(id) {
-    await sleep(2000)
-    return users.find(user => user.id === id)
+    return sleep(2000).then(() => {
+      return users.find(user => user.id === id)
+    })
 }  
 
 getUser(2).then((user) => {console.log(user)})
 
-function loadUsersSequentially(userIds) {
-    const userPromises = userIds.map(userId => getUser(userId));
-    return userPromises.reduce((chain, userPromise) => {
-      return chain.then(results => {
-        return userPromise.then(user => {
-          results.push(user);
-          return results;
-        });
-      });
-    }, Promise.resolve([]));
+const loadUsersSquentially = async (ID_list) => {
+  const t0 = Date.now();
+  let loadedUsers = [];
+  for(let i = 0; i < ID_list.length; i++){
+    loadedUsers.push(await getUser(ID_list[i]));
   }
-  
-  function loadUsersInParallel(userIds) {
-    const userPromises = userIds.map(userId => getUser(userId));
-    return Promise.all(userPromises);
-  }
-  
-  // Example usage of loadUsersSequentially()
-  loadUsersSequentially([1, 2])
-    .then(users => {
-      console.log(users);
-    })
-    .catch(error => {
-      console.log(error);
-    });
-  
-  // Example usage of loadUsersInParallel()
-  loadUsersInParallel([1, 2])
-    .then(users => {
-      console.log(users);
-    })
-    .catch(error => {
-      console.log(error);
-    });
+  console.log(`Пользователи загружены за ${(Date.now() - t0) /1000} секунд`);
+  console.log('Список пользователей:');
+  loadedUsers.forEach(user => console.log(user))
+
+  return loadedUsers;
+}
+
+
+const loadUsersInParallel = async (ID_list) => {
+  const t1 = Date.now();
+  const promises = ID_list.map(x => getUser(x))
+  const loadedUsers = await Promise.all(promises);
+  console.log(`Пользователи загружены за ${(Date.now() - t1) /1000} секунд`);
+  console.log('Список пользователей:');
+  loadedUsers.forEach(element => element.getInfo())
+  return loadedUsers;
+}
+
+
+loadUsersSquentially([1,2])
