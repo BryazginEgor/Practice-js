@@ -41,23 +41,19 @@ console.log(getTotalAge(users));
 
 function getUsersStreets(users){
     let street = [];
-    for (let i = 0; i < users.length; i++){
-        street.push(users[i].adress.street)
-    }
+    users.map(user => street.push(user.adress.street))
     return street;
 }
 
+console.log("УЛИЦЫ")
 console.log(getUsersStreets(users));
 
 
 function getOldPeople(users){
     let oldPeople = []
-    for (let i = 0; i < users.length; i++){
-        if (users[i].age > 60){
-            oldPeople.push(users[i])
-        }
-    }
+    users.map(user => oldPeople.push(user))
     return oldPeople;
 }
 
+console.log("Возраст 60+")
 console.log(getOldPeople(users));
